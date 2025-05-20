@@ -1,5 +1,8 @@
 <script setup>
 import { reactive } from 'vue'
+import Cabecalho from './components/Cabecalho.vue'
+import Formulario from './components/Formulario.vue'
+import ListaDeTarefas from './components/ListaDeTarefas.vue'
 
 const state = reactive({
   filter: 'todas',
@@ -52,50 +55,13 @@ const cadastraTarefa = () => {
 
 <template>
   <div class="container">
-    <header class="p-5 mb-4 mt-4 bg-light rounded-3">
-      <h1>Minhas Tarefas</h1>
-      <p>Você tem {{ getTarefasPendentes().length }} tarefas pendentes</p>
-    </header>
-    <form @submit.prevent="cadastraTarefa">
-      <div class="row">
-        <div class="col">
-          <input
-            :value="state.tempTask"
-            @change="(event) => (state.tempTask = event.target.value)"
-            required
-            type="text"
-            placeholder="Digite a descrição da tarefa"
-            class="form-control"
-          />
-        </div>
-        <div class="col-md-2">
-          <button class="btn btn-primary" type="submit">Cadastrar</button>
-        </div>
-        <div class="col-md-2">
-          <select @change="(event) => (state.filter = event.target.value)" class="form-control">
-            <option value="todas">Todas as Tarefas</option>
-            <option value="finalizadas">Tarefas Finalizadas</option>
-            <option value="pendentes">Tarefas Pendentes</option>
-          </select>
-        </div>
-      </div>
-    </form>
-    <ul class="list-group mt-4">
-      <li class="list-group-item" v-for="task in getTarefasFiltradas()">
-        <input
-          @change="(event) => (task.done = event.target.checked)"
-          :checked="task.done"
-          :id="task.title"
-          type="checkbox"
-        />
-        <label :class="{ done: task.done }" class="ms-3" :for="task.title">{{ task.title }}</label>
-      </li>
-    </ul>
+    <Cabecalho :tarefas-pendentes="getTarefasPendentes().length" />
+    <Formulario
+      :trocar-filtro="(event) => (state.filter = event.target.value)"
+      :temp-task="state.tempTask"
+      :edit-temp-task="(event) => (state.tempTask = event.target.value)"
+      :cadastra-tarefa="cadastraTarefa"
+    />
+    <ListaDeTarefas :tasks="getTarefasFiltradas()" />
   </div>
 </template>
-
-<style scoped>
-.done {
-  text-decoration: line-through;
-}
-</style>
